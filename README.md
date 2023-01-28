@@ -2,10 +2,16 @@
 
 Generate most minimum projects easily.
 
-## Author
+### Usage
+
+```
+npx create-min-app@latest
+```
+
+### Author
 
 [Hisam A Fahri](https://hisamafahri.com): [@hisamafahri](https://github.com/hisamafahri)
 
-## License
+### License
 
 [MIT](LICENSE)
