@@ -31,7 +31,7 @@ inquirer
           type: "list",
           message: `What ${projectKind} project you want to generate?`,
           choices: fs.readdirSync(
-            path.join(__dirname, "templates", projectKind)
+            path.join(__dirname, "../src/templates", projectKind)
           ),
         },
         {
@@ -41,7 +41,6 @@ inquirer
         },
       ])
       .then((answers: Record<string, string>) => {
-        console.log(answers);
         const projectName = answers["name"];
         const template = answers["type"];
 
@@ -51,13 +50,14 @@ inquirer
         }
         const templatePath = path.join(
           __dirname,
-          "templates",
+          "../src/templates",
           projectKind,
           template
         );
 
         createDirectory(path.join(currentDirectory, projectName));
         createProjectContents(templatePath, projectName);
+        console.info("Project successfully generated!");
       })
       .catch((err) => console.error(err));
   })
@@ -74,7 +74,6 @@ function createDirectory(path: string) {
 
 function createProjectContents(templatePath: string, projectName: string) {
   const template = fs.readdirSync(templatePath);
-  console.log(projectName);
   template.forEach((file) => {
     const originalFilePath = path.join(templatePath, file);
     const fileStats = fs.statSync(originalFilePath);
