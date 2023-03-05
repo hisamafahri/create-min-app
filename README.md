@@ -2,9 +2,18 @@
 
 Generate most minimum projects easily.
 
+### Options
+
+- Web
+  - NextJS
+  - NextJ + Tailwind
+
+- Backend
+  - Fastify
+
 ### Usage
 
-```
+```shell
 npx create-min-app@latest
 ```
 
