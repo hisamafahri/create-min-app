@@ -16,7 +16,7 @@ const KIND = [
     name: "kind",
     type: "list",
     message: "What kind of project you want to start?",
-    choices: ["Web"],
+    choices: ["Backend", "Web"],
   },
 ];
 
