@@ -6,6 +6,7 @@
     "build": "tsc"
   },
   "devDependencies": {
+    "@types/node": "latest",
     "nodemon": "latest",
     "ts-node": "latest",
     "typescript": "latest"
