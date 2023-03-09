@@ -11,6 +11,9 @@ Generate most minimum projects easily.
 - Backend
   - Fastify
 
+- Packages
+  - NodeJS
+
 ### Usage
 
 ```shell
