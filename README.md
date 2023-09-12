@@ -2,17 +2,18 @@
 
 Generate most minimum projects easily.
 
-### Options
+### Available Options
 
 - Web
-  - NextJS
-  - NextJ + Tailwind
+  - NextJS (Using [`create-next-app`](https://www.npmjs.com/package/create-next-app) is recommended)
+  - NextJS + TailwindCSS (Using [`create-next-app`](https://www.npmjs.com/package/create-next-app) is recommended)
 
 - Backend
   - Fastify
+  - Fastify + Fastify Decorators
 
 - Packages
-  - NodeJS
+  - NodeJS + TypeScript
 
 ### Usage
 
@@ -22,7 +23,7 @@ npx create-min-app@latest
 
 ### Author
 
-[Hisam A Fahri](https://hisamafahri.com): [@hisamafahri](https://github.com/hisamafahri)
+[Hisam Fahri](https://hisam.dev): [@hisamafahri](https://github.com/hisamafahri)
 
 ### License
 
