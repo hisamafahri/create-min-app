@@ -16,7 +16,7 @@ const KIND = [
     name: "kind",
     type: "list",
     message: "What kind of project you want to start?",
-    choices: ["Backend", "Web", "Packages"],
+    choices: ["Base", "Web Server"],
   },
 ];
 
@@ -31,7 +31,11 @@ inquirer
           type: "list",
           message: `What ${projectKind} project you want to generate?`,
           choices: fs.readdirSync(
-            path.join(__dirname, "../src/templates", projectKind)
+            path.join(
+              __dirname,
+              "../src/templates",
+              projectKind.replace(" ", "-"),
+            ),
           ),
         },
         {
@@ -51,8 +55,8 @@ inquirer
         const templatePath = path.join(
           __dirname,
           "../src/templates",
-          projectKind,
-          template
+          projectKind.replace(" ", "-"),
+          template,
         );
 
         createDirectory(path.join(currentDirectory, projectName));
@@ -92,7 +96,7 @@ function createProjectContents(templatePath: string, projectName: string) {
       }
       createProjectContents(
         path.join(templatePath, file),
-        path.join(projectName, file)
+        path.join(projectName, file),
       );
     }
   });
