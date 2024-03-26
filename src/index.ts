@@ -1,103 +1,83 @@
 #!/usr/bin/env node
 
-import fs from "fs";
-import inquirer from "inquirer";
 import path from "path";
+import fs from "fs";
+import select from "@inquirer/select";
+import input from "@inquirer/input";
 import { fileURLToPath } from "url";
-import { render } from "./utils/template.js";
+import {
+  createDirectory,
+  createProjectContents,
+  kebabToTitleCase,
+} from "./utils/index.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const currentDirectory = process.cwd();
-const SKIP_FILES = ["node_modules"];
 
-const KIND = [
-  {
-    name: "kind",
-    type: "list",
-    message: "What kind of project you want to start?",
-    choices: ["Base", "Web Server"],
-  },
-];
+const runtime = await select({
+  message: "What runtime you want to use?",
+  choices: [
+    {
+      name: "Node.js",
+      value: "node",
+    },
+    {
+      name: "Bun",
+      value: "bun",
+    },
+  ],
+}).catch(() => {
+  console.error("Runtime is not selected!");
+  process.exit(1);
+});
 
-inquirer
-  .prompt(KIND)
-  .then((kind: Record<string, string>) => {
-    const projectKind = kind["kind"]?.toLowerCase() || "";
-    inquirer
-      .prompt([
-        {
-          name: "type",
-          type: "list",
-          message: `What ${projectKind} project you want to generate?`,
-          choices: fs.readdirSync(
-            path.join(
-              __dirname,
-              "../src/templates",
-              projectKind.replace(" ", "-"),
-            ),
-          ),
-        },
-        {
-          name: "name",
-          type: "input",
-          message: "What's your project name?",
-        },
-      ])
-      .then((answers: Record<string, string>) => {
-        const projectName = answers["name"];
-        const template = answers["type"];
+const type = await select({
+  message: "What kind of project you want to generate?",
+  choices: fs
+    .readdirSync(path.join(__dirname, "../src/templates", runtime))
+    .map((file) => ({
+      name: kebabToTitleCase(file),
+      value: file.replace(" ", "-"),
+    })),
+}).catch(() => {
+  console.error("Project type is not selected!");
+  process.exit(1);
+});
 
-        if (!projectName || !template) {
-          console.error("Project type/name not being selected!");
-          return;
-        }
-        const templatePath = path.join(
-          __dirname,
-          "../src/templates",
-          projectKind.replace(" ", "-"),
-          template,
-        );
+const template = await select({
+  message: "What template you want to use?",
+  choices: fs
+    .readdirSync(path.join(__dirname, "../src/templates", runtime, type))
+    .map((file) => ({
+      name: kebabToTitleCase(file),
+      value: file.replace(" ", "-"),
+    })),
+}).catch(() => {
+  console.error("Template is not selected!");
+  process.exit(1);
+});
 
-        createDirectory(path.join(currentDirectory, projectName));
-        createProjectContents(templatePath, projectName);
-        console.info("Project successfully generated!");
-      })
-      .catch((err) => console.error(err));
-  })
-  .catch((err) => console.error(err));
-
-function createDirectory(path: string) {
-  if (fs.existsSync(path)) {
-    console.warn(path, "is already exists!");
-  } else if (!fs.existsSync(path)) {
-    console.info("Generating project...");
-    fs.mkdirSync(path);
-  }
-}
-
-function createProjectContents(templatePath: string, projectName: string) {
-  const template = fs.readdirSync(templatePath);
-  template.forEach((file) => {
-    const originalFilePath = path.join(templatePath, file);
-    const fileStats = fs.statSync(originalFilePath);
-    if (SKIP_FILES.indexOf(file) > -1) return;
-
-    if (fileStats.isFile()) {
-      let contents = fs.readFileSync(originalFilePath, "utf8");
-      contents = render(contents, { projectName });
-
-      const writePath = path.join(currentDirectory, projectName, file);
-      fs.writeFileSync(writePath, contents, "utf8");
-    } else {
-      // is not a 'file' (e.g a folder)
-      if (!fs.existsSync(path.join(currentDirectory, projectName, file))) {
-        fs.mkdirSync(path.join(currentDirectory, projectName, file));
-      }
-      createProjectContents(
-        path.join(templatePath, file),
-        path.join(projectName, file),
-      );
+const name = await input({
+  message: "What's project name? ",
+  validate: (value) => {
+    if (value.trim()) {
+      return true;
     }
-  });
-}
+    return "Project name is required!";
+  },
+}).catch(() => {
+  console.error("Invalid input!");
+  process.exit(1);
+});
+
+const templatePath = path.join(
+  __dirname,
+  "../src/templates",
+  runtime,
+  type,
+  template,
+);
+
+createDirectory(path.join(process.cwd(), name));
+createProjectContents(templatePath, name);
+console.info(`Project ${name} successfully generated!`);
