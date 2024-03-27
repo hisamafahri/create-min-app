@@ -4,12 +4,16 @@ Generate most minimum projects easily.
 
 ### Available Options
 
-- Backend
+- Node.js
 
-  - Fastify
+  - Base
+    - NodeJS + TypeScript
+  - Web server
+    - Fastify
 
-- Packages
-  - NodeJS + TypeScript
+- Bun
+  - Web server
+    - Hono
 
 ### Usage
 
